@@ -1,3 +1,10 @@
+/*
+
+
+
+*/
+
+
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
