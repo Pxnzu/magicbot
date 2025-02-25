@@ -22,12 +22,11 @@ const client = new Client({
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 
-});
+});S
 
 
 
 client.once(Events.ClientReady, c => {
-    console.log(`Logged in as ${client.user.tag}!`);
 
 	const ping = new SlashCommandBuilder()
 		.setName("ping")
