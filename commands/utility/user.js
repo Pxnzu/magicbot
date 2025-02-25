@@ -1,5 +1,3 @@
-commands/utility/user.js
-commands/utility/server.js
 const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
