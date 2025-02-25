@@ -7,7 +7,7 @@ To run bot ==> node index.js
 
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, Collection, Events, SlashCommandBuilder, GatewayIntentBits, EmbedBuilder } = require('discord.js');
+const { Client, Collection, Events, SlashCommandBuilder, GatewayIntentBits, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
 const { token, testToken } = require("./config.json");
 
 const client = new Client({ 
@@ -84,14 +84,47 @@ client.on(Events.InteractionCreate, async (interaction) => {
 				const face1 = cardData.card_faces[0];
 				const face2 = cardData.card_faces[1];
 
-				embed
-					.setTitle(`${face1.name} // ${face2.name}`)
-					.setDescription('MarketPrice: $' + cardData.prices.usd + '\nFoil: $' + cardData.prices.usd_foil)
-					.setImage(face1.image_uris.normal || '')
-					.addFields(
-                    	{ name: 'Set', value: cardData.set_name, inline: true }
-				);
-			
+				await interaction.deferReply();
+
+				const first = new ButtonBuilder()
+					.setCustomId('pageFirst')
+					.setEmoji('⏪')
+					.setStyle(ButtonStyle.Primary)
+					.setDisabled(true)
+
+				const prev = new ButtonBuilder()
+					.setCustomId('pagePrev')
+					.setEmoji('◀️')
+					.setStyle(ButtonStyle.Primary)
+					.setDisabled(true)
+					
+				const pageCount = new ButtonBuilder()
+					.setCustomId('pageCount')
+					.setLabel(`${index + 1}/${cardData.card_faces.length}`)
+					.setStyle(ButtonStyle.Secondary)
+					.setDisabled(true)
+
+				const next = new ButtonBuilder()
+					.setCustomId('pageNext')
+					.setEmoji('▶️')
+					.setStyle(ButtonStyle.Primary)
+					.setDisabled(true)
+
+				const last = new ButtonBuilder()
+					.setCustomId('pageLast')
+					.setEmoji('⏩')
+					.setStyle(ButtonStyle.Primary)
+					.setDisabled(true)
+				
+				const buttons = new ActionRowBuilder().addComponents([first, prev, pageCount, next, last]);
+
+				const msg = await interaction.editReply({ embeds: [pages[index]], components: [buttons], fetchReply: true });
+
+				const collector = await msg.createMessageComponentCollector({
+					ComponentType: ComponentType.Button,
+					time
+				})
+
 			} else {
 				embed
 					.setTitle(cardData.name)
@@ -100,8 +133,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
 					.addFields(
                     	{ name: 'Set', value: cardData.set_name, inline: true }
 				);
+				interaction.reply({ embeds: [embed] });
 			}
-			interaction.reply({ embeds: [embed] });
 		} catch (error) {
 			console.error(error);
 			interaction.reply('An error occurred while fetching the card data.');
