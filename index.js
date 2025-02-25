@@ -109,7 +109,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 	}
 });
 
-client.login(testToken);
+client.login(Token);
 
 /*
 				.setURL(cardData.scryfall_uri)
