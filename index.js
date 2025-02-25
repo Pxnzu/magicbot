@@ -1,7 +1,5 @@
 /*
 
-
-
 */
 
 
@@ -32,7 +30,12 @@ client.once(Events.ClientReady, c => {
 		.setName("ping")
 		.setDescription("Replies with pong!")
 
+	const server = new SlashCommandBuilder()
+		.setName('server')
+		.setDescription('Provides information about the server.')
+
 	client.application.commands.create(ping);
+	client.application.commands.create(server);
 });
 
 client.on(Events.InteractionCreate, interaction => {
