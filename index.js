@@ -8,7 +8,7 @@ To run bot ==> node index.js
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, SlashCommandBuilder, GatewayIntentBits, EmbedBuilder } = require('discord.js');
-const { token } = require("./config.json");
+const { token, testToken } = require("./config.json");
 
 const client = new Client({ 
   intents: [
@@ -109,7 +109,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 	}
 });
 
-client.login(token);
+client.login(testToken);
 
 /*
 				.setURL(cardData.scryfall_uri)
