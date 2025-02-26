@@ -46,4 +46,4 @@ client.on('interactionCreate', async interaction => {
     }
 });
 
-client.login(testToken);
+client.login(token);
