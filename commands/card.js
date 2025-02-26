@@ -37,9 +37,9 @@ module.exports = {
                             { name: 'Foil:', value: '$' + cardData.prices.usd_foil, inline: true }
                     ),
                     new EmbedBuilder()
-                        .setTitle(face2.name)
+                        .setTitle(face1.name)
                         .setURL(cardData.scryfall_uri || 'https://scryfall.com')
-                        .setDescription('On back: ' + face1.name)
+                        .setDescription('On back: ' + face2.name)
                         .setImage(face2.image_uris.normal || '')
                         .addFields(
                             { name: '', value: 'Set: ' + cardData.set_name },
@@ -67,7 +67,7 @@ module.exports = {
                 const message = interaction.editReply({ embeds: [pages[currentPage]], components: [row], withResponse: true });
 
                 const filter = i => i.user.id === interaction.user.id && ['prev', 'next'].includes(i.customId);
-                const collector = interaction.channel.createMessageComponentCollector({ filter, time: 60000 });
+                const collector = interaction.channel.createMessageComponentCollector({ filter, time: 120000 });
 
                 collector.on('collect', async i => {
                     if (i.customId === 'prev' && currentPage > 0) {
