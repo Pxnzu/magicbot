@@ -2,6 +2,7 @@
 API DOCS ==> https://scryfall.com/docs/api
 DISCORD.JS DOCS ==> https://discord.js.org/docs/packages/discord.js/14.18.0
 To run bot ==> node index.js
+EMBED LAYOUT ==> https://discordjs.guide/popular-topics/embeds.html#embed-preview
 */
 
 
@@ -81,57 +82,80 @@ client.on(Events.InteractionCreate, async (interaction) => {
 			const cardData = await response.json();
 			const embed = new EmbedBuilder().setColor('LuminousVividPink').setURL(cardData.scryfall_uri || 'https://scryfall.com')
 			if (cardData.card_faces) {
+				await interaction.deferReply();
 				const face1 = cardData.card_faces[0];
 				const face2 = cardData.card_faces[1];
 
-				await interaction.deferReply();
+				const pages = [
+					new EmbedBuilder()
+						.setTitle(face1.name)
+						.setURL(cardData.scryfall_uri || 'https://scryfall.com')
+						.setDescription('On back: ' + face2.name)
+						.setImage(face1.image_uris.normal || '')
+						.addFields(
+							{ name: '', value: 'Set: ' + cardData.set_name },
+							{ name: '\u200B', value: '\u200B' },
+							{ name: 'MarketPrice:', value: '$' + cardData.prices.usd, inline: true },
+							{ name: 'Foil:', value: '$' + cardData.prices.usd_foil, inline: true }
+					),
+					new EmbedBuilder()
+						.setTitle(face2.name)
+						.setURL(cardData.scryfall_uri || 'https://scryfall.com')
+						.setDescription('On back: ' + face1.name)
+						.setImage(face2.image_uris.normal || '')
+						.addFields(
+							{ name: '', value: 'Set: ' + cardData.set_name },
+							{ name: '\u200B', value: '\u200B' },
+							{ name: 'MarketPrice:', value: '$' + cardData.prices.usd, inline: true },
+							{ name: 'Foil:', value: '$' + cardData.prices.usd_foil, inline: true }
+					)
+						
+				];
 
-				const first = new ButtonBuilder()
-					.setCustomId('pageFirst')
-					.setEmoji('⏪')
-					.setStyle(ButtonStyle.Primary)
-					.setDisabled(true)
+				let currentPage = 0;
 
-				const prev = new ButtonBuilder()
-					.setCustomId('pagePrev')
-					.setEmoji('◀️')
-					.setStyle(ButtonStyle.Primary)
-					.setDisabled(true)
-					
-				const pageCount = new ButtonBuilder()
-					.setCustomId('pageCount')
-					.setLabel(`${index + 1}/${cardData.card_faces.length}`)
-					.setStyle(ButtonStyle.Secondary)
-					.setDisabled(true)
+				const row = new ActionRowBuilder()
+					.addComponents(
+						new ButtonBuilder()
+							.setCustomId('prev')
+							.setEmoji('◀️')
+							.setStyle(ButtonStyle.Primary)
+							.setDisabled(true),
+						new ButtonBuilder()
+							.setCustomId('next')
+							.setEmoji('▶️')
+							.setStyle(ButtonStyle.Primary)
+					);
+				const message = interaction.editReply({ embeds: [pages[currentPage]], components: [row], withResponse: true });
 
-				const next = new ButtonBuilder()
-					.setCustomId('pageNext')
-					.setEmoji('▶️')
-					.setStyle(ButtonStyle.Primary)
-					.setDisabled(true)
+				const filter = i => i.user.id === interaction.user.id && ['prev', 'next'].includes(i.customId);
+				const collector = interaction.channel.createMessageComponentCollector({ filter, time: 60000 });
 
-				const last = new ButtonBuilder()
-					.setCustomId('pageLast')
-					.setEmoji('⏩')
-					.setStyle(ButtonStyle.Primary)
-					.setDisabled(true)
-				
-				const buttons = new ActionRowBuilder().addComponents([first, prev, pageCount, next, last]);
+				collector.on('collect', async i => {
+					if (i.customId === 'prev' && currentPage > 0) {
+						currentPage--;
+					} else if (i.customId === 'next' && currentPage < pages.length - 1) {
+						currentPage++;
+					}
+		
+					row.components[0].setDisabled(currentPage === 0);
+					row.components[1].setDisabled(currentPage === pages.length - 1);
+		
+					await i.update({ embeds: [pages[currentPage]], components: [row] });
+				});
 
-				const msg = await interaction.editReply({ embeds: [pages[index]], components: [buttons], fetchReply: true });
 
-				const collector = await msg.createMessageComponentCollector({
-					ComponentType: ComponentType.Button,
-					time
-				})
 
 			} else {
 				embed
 					.setTitle(cardData.name)
-					.setDescription('MarketPrice: $' + cardData.prices.usd + '\nFoil: $' + cardData.prices.usd_foil)
+					.setDescription('On back: ' + cardData.name)
 					.setImage(cardData.image_uris.normal || '')
 					.addFields(
-                    	{ name: 'Set', value: cardData.set_name, inline: true }
+                    	{ name: '', value: 'Set: ' + cardData.set_name },
+						{ name: '\u200B', value: '\u200B' },
+						{ name: 'MarketPrice:', value: '$' + cardData.prices.usd, inline: true },
+						{ name: 'Foil:', value: '$' + cardData.prices.usd_foil, inline: true }
 				);
 				interaction.reply({ embeds: [embed] });
 			}
