@@ -1,10 +1,5 @@
-/*
-API DOCS ==> https://scryfall.com/docs/api
-DISCORD.JS DOCS ==> https://discord.js.org/docs/packages/discord.js/14.18.0
-To run bot ==> node index.js
-EMBED LAYOUT ==> https://discordjs.guide/popular-topics/embeds.html#embed-preview
-*/
-
+// To run bot ==> node index.js
+// To redeploy commands ==> node deploy-commands.js
 
 const fs = require('node:fs');
 const { Client, Collection, Events, SlashCommandBuilder, GatewayIntentBits, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
@@ -56,6 +51,7 @@ client.on('interactionCreate', async interaction => {
 
     if (!command) return;
 
+    // execute command
     try {
         await command.execute(interaction, profileData);
     } catch (error) {
