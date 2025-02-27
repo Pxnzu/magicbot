@@ -26,11 +26,13 @@ for (const file of commandFiles) {
 	client.commands.set(command.data.name, command);
 }
 
+// log in console when bot is ready
 client.once('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 
 });
 
+// call each command when triggered
 client.on('interactionCreate', async interaction => {
     if (!interaction.isChatInputCommand()) return;
 
@@ -46,4 +48,5 @@ client.on('interactionCreate', async interaction => {
     }
 });
 
+//login
 client.login(token);

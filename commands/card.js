@@ -11,19 +11,27 @@ module.exports = {
     async execute(interaction) {
         const cardName = interaction.options.getString('name');
         const url = `https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(cardName)}`;
-    
+        
+        // fetch card
         try {
+
+            // check if card is found
             const response = await fetch(url);
             if (!response.ok) {
                 return interaction.reply('Card not found. Please try a different name.');
             } 
+
+            // create embed for card
             const cardData = await response.json();
             const embed = new EmbedBuilder().setColor('LuminousVividPink').setURL(cardData.scryfall_uri || 'https://scryfall.com')
+            
+            // if card has two faces
             if (cardData.card_faces) {
                 await interaction.deferReply();
                 const face1 = cardData.card_faces[0];
                 const face2 = cardData.card_faces[1];
 
+                // multi-page embed
                 const pages = [
                     new EmbedBuilder()
                         .setTitle(face1.name)
@@ -52,6 +60,7 @@ module.exports = {
 
                 let currentPage = 0;
 
+                // row of buttons at bottom
                 const row = new ActionRowBuilder()
                     .addComponents(
                         new ButtonBuilder()
@@ -68,7 +77,8 @@ module.exports = {
 
                 const filter = i => i.user.id === interaction.user.id && ['prev', 'next'].includes(i.customId);
                 const collector = interaction.channel.createMessageComponentCollector({ filter, time: 120000 });
-
+                
+                // receive button presses and update embed
                 collector.on('collect', async i => {
                     if (i.customId === 'prev' && currentPage > 0) {
                         currentPage--;
@@ -85,6 +95,8 @@ module.exports = {
 
 
             } else {
+
+                // if card has one face
                 embed
                     .setTitle(cardData.name)
                     .setDescription('On back: ' + cardData.name)
@@ -98,6 +110,8 @@ module.exports = {
                 interaction.reply({ embeds: [embed] });
             }
         } catch (error) {
+
+            // if url cannot be reached
             console.error(error);
             await interaction.reply('An error occurred while fetching the card data.');
         }
