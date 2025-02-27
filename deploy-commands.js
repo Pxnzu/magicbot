@@ -10,13 +10,13 @@ for (const file of commandFiles) {
     commands.push(command.data.toJSON()); // Ensure .toJSON() is used
 }
 
-const rest = new REST({ version: '10' }).setToken(token);
+const rest = new REST({ version: '10' }).setToken(token); //                                    TOKEN
 
 (async () => {
     try {
         console.log('Refreshing application (/) commands...');
 
-        await rest.put(Routes.applicationCommands(clientId), { body: commands });
+        await rest.put(Routes.applicationCommands(clientId), { body: commands }); //                CLIENTID
 
         console.log('Successfully registered application commands.');
     } catch (error) {

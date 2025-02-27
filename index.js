@@ -8,7 +8,9 @@ EMBED LAYOUT ==> https://discordjs.guide/popular-topics/embeds.html#embed-previe
 
 const fs = require('node:fs');
 const { Client, Collection, Events, SlashCommandBuilder, GatewayIntentBits, EmbedBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js');
-const { token, testToken } = require("./config.json");
+const { token, testToken, MONGODB: database } = require("./config.json");
+const mongoose = require("mongoose");
+const profileModel = require("./models/profileSchema");
 
 const client = new Client({ 
   intents: [
@@ -36,17 +38,41 @@ client.once('ready', () => {
 client.on('interactionCreate', async interaction => {
     if (!interaction.isChatInputCommand()) return;
 
+    // get user db information and pass to command\
+    let profileData;
+    try {
+        profileData = await profileModel.findOne({userId: interaction.user.id})
+        if(!profileData) {
+            profileData = await profileModel.create({
+                userId: interaction.user.id,
+                serverId: interaction.guild.id,
+            })
+        }
+    } catch (error) {
+        console.log(err);
+    }
+
     const command = client.commands.get(interaction.commandName);
 
     if (!command) return;
 
     try {
-        await command.execute(interaction);
+        await command.execute(interaction, profileData);
     } catch (error) {
         console.error(error);
         await interaction.reply({ content: 'There was an error executing this command!', ephemeral: true });
     }
 });
+
+// login to database
+mongoose
+    .connect(database, {
+        
+    }).then(() => {
+        console.log("Connected to the database!")
+    }).catch((err) => {
+        console.log(err)
+    })
 
 //login
 client.login(token);
