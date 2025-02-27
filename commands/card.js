@@ -92,14 +92,11 @@ module.exports = {
                     await i.update({ embeds: [pages[currentPage]], components: [row] });
                 });
 
-
-
             } else {
 
                 // if card has one face
                 embed
                     .setTitle(cardData.name)
-                    .setDescription('On back: ' + cardData.name)
                     .setImage(cardData.image_uris.normal || '')
                     .addFields(
                         { name: '', value: 'Set: ' + cardData.set_name },
