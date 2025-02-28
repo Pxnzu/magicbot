@@ -2,11 +2,15 @@ const { Client, Collection, Events, SlashCommandBuilder, GatewayIntentBits, Embe
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('randomcard')
-        .setDescription('Gives user random Magic card'),
+        .setName('cardfind')
+        .setDescription('Get information about a Magic: The Gathering card')
+        .addStringOption(option =>
+            option.setName('name')
+                .setDescription('The name of the card')
+                .setRequired(true)),
     async execute(interaction) {
         const cardName = interaction.options.getString('name');
-        const url = `https://api.scryfall.com/cards/random`;
+        const url = `https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(cardName)}`;
         
         // fetch card
         try {
