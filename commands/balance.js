@@ -8,6 +8,6 @@ module.exports = {
         const {magicTokens} = profileData;
         const username = interaction.user.username;
 
-        await interaction.reply(`${username} has ${magicTokens} tokens!`);
+        await interaction.reply(`${username} has ${magicTokens} magic tokens!`);
     },
 };
