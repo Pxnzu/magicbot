@@ -2,7 +2,7 @@ const { Client, Collection, Events, SlashCommandBuilder, GatewayIntentBits, Embe
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('card')
+        .setName('findcard')
         .setDescription('Get information about a Magic: The Gathering card')
         .addStringOption(option =>
             option.setName('name')
