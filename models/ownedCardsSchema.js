@@ -5,6 +5,6 @@ const ownedCardsSchema = new mongoose.Schema({
     userId: { type: String, require: true, unique: true }
 });
 
-const model = mongoose.model("magicbot", ownedCardsSchema);
+const model = mongoose.model("ownedcards", ownedCardsSchema);
 
 module.exports = model;
