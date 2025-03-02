@@ -21,9 +21,9 @@ module.exports = {
             .sort({magicTokens: -1})
             .catch((err) => console.log(err))
 
-        const memberIdx = members.findIndex((member) => member.usedId === id);
+        const memberIdx = members.findIndex((member) => member.userId === id);
 
-        leaderboardEmbed.setFooter({text: `${username}, you're rank #${memberIdx + 2} with ${magicTokens}`});
+        leaderboardEmbed.setFooter({text: `${username}, you're rank #${memberIdx + 1} with ${magicTokens}`});
 
         const topTen = members.slice(0, 10);
 
