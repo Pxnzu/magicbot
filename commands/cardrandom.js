@@ -5,7 +5,6 @@ module.exports = {
         .setName('cardrandom')
         .setDescription('Gives user random Magic card'),
     async execute(interaction) {
-        const cardName = interaction.options.getString('name');
         const url = `https://api.scryfall.com/cards/random`;
         
         // fetch card

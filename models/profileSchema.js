@@ -5,6 +5,7 @@ const profileSchema = new mongoose.Schema({
     serverId: { type: String, require: true},
     magicTokens: { type: Number, default: 0 },
     dailyLastUsed : { type: Number, default: 0},
+    rollLastUsed : { type: Number, default: 0},
     cardDailyLeft : { type: Number, default: 10},
     ownedCards: { type: Array, require: true}
 });
