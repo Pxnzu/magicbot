@@ -56,7 +56,7 @@ client.on('interactionCreate', async interaction => {
         await command.execute(interaction, profileData);
     } catch (error) {
         console.error(error);
-        await interaction.reply({ content: 'There was an error executing this command!', ephemeral: true });
+        await interaction.reply({ content: 'There was an error executing this command!'});
     }
 });
 
@@ -71,4 +71,4 @@ mongoose
     })
 
 //login
-client.login(token);
+client.login(testToken);
