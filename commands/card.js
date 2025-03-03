@@ -12,11 +12,9 @@ module.exports = {
         const {cardDailyLeft} = profileData;
         const {id} = interaction.user;
 
-        
         const cooldown = 86400000;
         const timeLeft = cooldown - (Date.now() - rollLastUsed);
        
-
         if(timeLeft > 0) {
             await interaction.deferReply();
             const { hours, minutes, seconds } = parseMilliseconds(timeLeft);
@@ -146,7 +144,6 @@ module.exports = {
             } catch (err) {
                 console.log(err)
             }
-
             console.log("minus 1");
         }
         }
