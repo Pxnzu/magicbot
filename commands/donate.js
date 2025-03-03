@@ -52,7 +52,10 @@ module.exports = {
                 }
             },
         );
-
-        await interaction.editReply(`You have donated ${donateAmt} coins to ${receiveUser.username}`);
+        if (donateAmt == 1) {
+            await interaction.editReply(`You have donated ${donateAmt} token to ${receiveUser.username}`);
+        } else {
+            await interaction.editReply(`You have donated ${donateAmt} tokens to ${receiveUser.username}`);
+        }
     },
 };
