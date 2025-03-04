@@ -33,7 +33,7 @@ client.once('ready', () => {
 client.on('interactionCreate', async interaction => {
     if (!interaction.isChatInputCommand()) return;
 
-    // get user db information and pass to command\
+    // get user db information and pass to command
     let profileData;
     try {
         profileData = await profileModel.findOne({userId: interaction.user.id})
