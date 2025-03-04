@@ -9,7 +9,7 @@ module.exports = {
                 .setDescription('How much you want to bet')
                 .setRequired(true)),
     async execute(interaction, profileData) {
-        const wagerAmt = interaction.options.getInteger('wager');
+        let wagerAmt = interaction.options.getInteger('wager');
         const { magicTokens } = profileData;
         if ( magicTokens < wagerAmt ) {
             return await interaction.reply(`You do not have ${wagerAmt} tokens to wager`);
@@ -24,7 +24,7 @@ module.exports = {
                 .setTitle('Blackjack')
                 .setDescription(`**Your hand:** ${handToString(playerHand)} (Total: ${calculateHand(playerHand)})\n**Dealer's hand:** ${cardToString(dealerHand[0])}, ??`)
                 .setColor(0x00AE86)
-                .addFields({ name: `${user.username}`, value : `Wagering ${wagerAmt} tokens...`});
+                .addFields({ name: `${interaction.user.username}`, value : `Wagering ${wagerAmt} tokens...`});
 
             const row = new ActionRowBuilder().addComponents(
                 new ButtonBuilder()
@@ -34,6 +34,10 @@ module.exports = {
                 new ButtonBuilder()
                     .setCustomId('stand')
                     .setLabel('Stand')
+                    .setStyle(ButtonStyle.Primary),
+                new ButtonBuilder()
+                    .setCustomId('doubledown')
+                    .setLabel('Double Down')
                     .setStyle(ButtonStyle.Primary)
             );
             
@@ -50,15 +54,21 @@ module.exports = {
                     }
                 } else if (i.customId === 'stand') {
                     collector.stop('stand');
+                } else if (i.customId === 'doubledown') {
+                    playerHand.push(drawCard(deck));
+                    wagerAmt *= 2;
+                    if (calculateHand(playerHand) > 21) {
+                        collector.stop('bust');
+                    }
+                    collector.stop('doubledown');
                 }
-
                 await i.update({
                     embeds: [
                         new EmbedBuilder()
                             .setTitle('Blackjack')
                             .setDescription(`**Your hand:** ${handToString(playerHand)} (Total: ${calculateHand(playerHand)})\n**Dealer's hand:** ${cardToString(dealerHand[0])}, ??`)
                             .setColor(0x00AE86)
-                            .addFields({ name: `${user.username}`, value : `Wagering ${wagerAmt} tokens...`})
+                            .addFields({ name: `${interaction.user.username}`, value : `Wagering ${wagerAmt} tokens...`})
                     ],
                     components: [row]
                 });
@@ -90,7 +100,7 @@ module.exports = {
                 let result = `**Your hand:** ${handToString(playerHand)} (Total: ${playerTotal})\n**Dealer's hand:** ${handToString(dealerHand)} (Total: ${dealerTotal})\n`;
                 if (dealerTotal > 21 || playerTotal > dealerTotal) {
                     result += '**You win!**';
-                    result += `\n${user.username} won ${wagerAmt} tokens!`;
+                    result += `\n${interaction.user.username} won ${wagerAmt} tokens!`;
                     await profileModel.findOneAndUpdate(
                         {
                             userId: interaction.user.id
@@ -103,10 +113,10 @@ module.exports = {
                     );
                 } else if (dealerTotal === playerTotal) {
                     result += '**It\'s a tie!**';
-                    result += `\n${user.username} kept their tokens!`;
+                    result += `\n${interaction.user.username} kept their tokens!`;
                 } else {
                     result += '**Dealer wins!**';
-                    result += `\n${user.username} lost ${wagerAmt} tokens!`;
+                    result += `\n${interaction.user.username} lost ${wagerAmt} tokens!`;
                     await profileModel.findOneAndUpdate(
                         {
                             userId: interaction.user.id
