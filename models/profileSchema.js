@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const profileSchema = new mongoose.Schema({
+    username: { type: String, require: true },
     userId: { type: String, require: true, unique: true },
     serverId: { type: String, require: true},
     magicTokens: { type: Number, default: 0 },
