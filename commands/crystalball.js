@@ -12,7 +12,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('crystalball')
         .setDescription('Stare into the crystal ball and see what it reveals...'),
-    
+    category: 'Fun',
     async execute(interaction) {
         const chance = Math.random(); // Random chance (0 to 1)
 

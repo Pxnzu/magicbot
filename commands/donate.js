@@ -18,6 +18,7 @@ module.exports = {
                 .setRequired(true)
                 .setMinValue(1)
         ),
+    category: 'Economy',
     async execute(interaction, profileData) {
         const receiveUser = interaction.options.getUser('user');
         const donateAmt = interaction.options.getInteger('amount');

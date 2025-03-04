@@ -8,6 +8,7 @@ module.exports = {
             option.setName('name')
                 .setDescription('The name of the card')
                 .setRequired(true)),
+    category: 'Magic The Gathering',
     async execute(interaction) {
         const cardName = interaction.options.getString('name');
         const url = `https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(cardName)}`;

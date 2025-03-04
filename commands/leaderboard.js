@@ -5,6 +5,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('leaderboard') // Name must be lowercase
         .setDescription('Shows top 10 users with the most magic tokens!'), // Description is required
+    category: 'Economy',
     async execute(interaction, profileData) {
         await interaction.deferReply();
 

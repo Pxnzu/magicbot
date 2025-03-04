@@ -22,7 +22,7 @@ module.exports = {
                 .setDescription('Your question for the magic conch')
                 .setRequired(true)
         ),
-    
+    category: 'Fun',
     async execute(interaction) {
         const question = interaction.options.getString('question');
         const response = responses[Math.floor(Math.random() * responses.length)];

@@ -4,6 +4,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('cardrandom')
         .setDescription('Gives user random Magic card'),
+    category: 'Magic The Gathering',
     async execute(interaction) {
         const url = `https://api.scryfall.com/cards/random`;
         

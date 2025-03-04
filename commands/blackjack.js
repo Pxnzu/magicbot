@@ -8,6 +8,7 @@ module.exports = {
             option.setName('wager')
                 .setDescription('How much you want to bet')
                 .setRequired(true)),
+    category: 'Economy',
     async execute(interaction, profileData) {
         let wagerAmt = interaction.options.getInteger('wager');
         const { magicTokens } = profileData;

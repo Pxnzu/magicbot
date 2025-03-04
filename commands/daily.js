@@ -6,6 +6,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('daily') // Name must be lowercase
         .setDescription('Redeem free every day!'), // Description is required
+    category: 'Economy',
     async execute(interaction, profileData) {
         const { id } = interaction.user;
         const { dailyLastUsed } = profileData;

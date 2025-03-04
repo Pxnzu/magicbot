@@ -7,6 +7,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('card') // Name must be lowercase
         .setDescription('User can roll for cards 10 times and claim 1 per day'), // Description is required
+    category: 'Magic The Gathering',
     async execute(interaction, profileData) {
         const { rollLastUsed, cardDailyLeft } = profileData;
         const { username, id } = interaction.user;

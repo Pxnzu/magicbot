@@ -21,6 +21,7 @@ module.exports = {
                 .setMinValue(1)
                 .setMaxValue(5)
         ),
+    category: 'Economy',
     async execute(interaction, profileData) {
         const userId = interaction.user.id;
         const username = interaction.user.username;
