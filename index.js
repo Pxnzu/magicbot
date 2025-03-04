@@ -39,6 +39,7 @@ client.on('interactionCreate', async interaction => {
         profileData = await profileModel.findOne({userId: interaction.user.id})
         if(!profileData) {
             profileData = await profileModel.create({
+                username: interaction.user.username,
                 userId: interaction.user.id,
                 serverId: interaction.guild.id,
             })
