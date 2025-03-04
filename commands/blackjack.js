@@ -19,6 +19,11 @@ module.exports = {
             const deck = createDeck();
             let playerHand = [drawCard(deck), drawCard(deck)];
             let dealerHand = [drawCard(deck), drawCard(deck)];
+
+            let isEnabled = false;
+            if (magicTokens >= wagerAmt*2) {
+                isEnabled = true;
+            }
             
             const embed = new EmbedBuilder()
                 .setTitle('Blackjack')
@@ -39,6 +44,7 @@ module.exports = {
                     .setCustomId('doubledown')
                     .setLabel('Double Down')
                     .setStyle(ButtonStyle.Primary)
+                    .setDisabled(!isEnabled)
             );
             
             await interaction.reply({ embeds: [embed], components: [row] });
