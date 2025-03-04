@@ -24,7 +24,7 @@ module.exports = {
                 .setTitle('Blackjack')
                 .setDescription(`**Your hand:** ${handToString(playerHand)} (Total: ${calculateHand(playerHand)})\n**Dealer's hand:** ${cardToString(dealerHand[0])}, ??`)
                 .setColor(0x00AE86)
-                .addFields({ name: '', value : `Wagering ${wagerAmt} tokens...`});
+                .addFields({ name: `${user.username}`, value : `Wagering ${wagerAmt} tokens...`});
 
             const row = new ActionRowBuilder().addComponents(
                 new ButtonBuilder()
@@ -58,6 +58,7 @@ module.exports = {
                             .setTitle('Blackjack')
                             .setDescription(`**Your hand:** ${handToString(playerHand)} (Total: ${calculateHand(playerHand)})\n**Dealer's hand:** ${cardToString(dealerHand[0])}, ??`)
                             .setColor(0x00AE86)
+                            .addFields({ name: `${user.username}`, value : `Wagering ${wagerAmt} tokens...`})
                     ],
                     components: [row]
                 });
@@ -89,6 +90,7 @@ module.exports = {
                 let result = `**Your hand:** ${handToString(playerHand)} (Total: ${playerTotal})\n**Dealer's hand:** ${handToString(dealerHand)} (Total: ${dealerTotal})\n`;
                 if (dealerTotal > 21 || playerTotal > dealerTotal) {
                     result += '**You win!**';
+                    result += `\n${user.username} won ${wagerAmt} tokens!`;
                     await profileModel.findOneAndUpdate(
                         {
                             userId: interaction.user.id
@@ -101,8 +103,10 @@ module.exports = {
                     );
                 } else if (dealerTotal === playerTotal) {
                     result += '**It\'s a tie!**';
+                    result += `\n${user.username} kept their tokens!`;
                 } else {
                     result += '**Dealer wins!**';
+                    result += `\n${user.username} lost ${wagerAmt} tokens!`;
                     await profileModel.findOneAndUpdate(
                         {
                             userId: interaction.user.id
