@@ -117,7 +117,7 @@ async function startRace(interaction, profileData) {
         } else {
             // Determine winning horse
             const winningHorse = positions.indexOf(Math.max(...positions)) + 1;
-            let resultMessage = `🏆 **Horse ${winningHorse} wins the race!**`;
+            let resultMessage = `🏇 **Horse ${winningHorse} wins the race!**`;
 
             let winners = bets.filter(bet => bet.chosenHorse === winningHorse);
             if (winners.length > 0) {
@@ -133,14 +133,14 @@ async function startRace(interaction, profileData) {
                             }
                         },
                     );
-                    resultMessage += `\n🎉 **${winner.username}** won **${winnings}** points! 💰`;
+                    resultMessage += `\n🎉 **${winner.username}** won **${winnings}** tokens! 💰`;
                 }
             } else {
                 resultMessage += `\n😢 No one bet on the winning horse. Better luck next time!`;
             }
 
             // Display final results
-            raceEmbed.setTitle('🏇 Race Finished! 🏇')
+            raceEmbed.setTitle('🏆 Race Finished! 🏆')
                 .setDescription(resultMessage)
                 .setColor('#00FF00');
 
