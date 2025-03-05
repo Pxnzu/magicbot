@@ -65,12 +65,12 @@ module.exports = {
                 const row = new ActionRowBuilder()
                     .addComponents(
                         new ButtonBuilder()
-                            .setCustomId('prev')
+                            .setCustomId(`prev${interaction.id}`)
                             .setEmoji('◀️')
                             .setStyle(ButtonStyle.Primary)
                             .setDisabled(true),
                         new ButtonBuilder()
-                            .setCustomId('next')
+                            .setCustomId(`next${interaction.id}`)
                             .setEmoji('▶️')
                             .setStyle(ButtonStyle.Primary)
                     );
@@ -80,9 +80,9 @@ module.exports = {
                 
                 // receive button presses and update embed
                 collector.on('collect', async i => {
-                    if (i.customId === 'prev' && currentPage > 0) {
+                    if (i.customId === `prev${interaction.id}` && currentPage > 0) {
                         currentPage--;
-                    } else if (i.customId === 'next' && currentPage < pages.length - 1) {
+                    } else if (i.customId === `next${interaction.id}` && currentPage < pages.length - 1) {
                         currentPage++;
                     }
         
