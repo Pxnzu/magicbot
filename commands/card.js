@@ -10,6 +10,7 @@ module.exports = {
     async execute(interaction, profileData) {
         const { rollLastUsed, cardDailyLeft, cardDailyClaimed } = profileData;
         const { username, id } = interaction.user;
+        let specificInteraction = interaction;
         
         const today = new Date().toISOString().split("T")[0]; // Get current date in YYYY-MM-DD format 
         // cooldown is up?
@@ -172,14 +173,14 @@ module.exports = {
                                     console.log(err);
                                 }
                                 collector.stop();
-                                return await i.update({ embeds: [embed2]});
+                                return await specificInteraction.editReply({ embeds: [embed2]});
                             }
                         }
             
                         row.components[0].setDisabled(currentPage === 0);
                         row.components[1].setDisabled(currentPage === pages.length - 1);
             
-                        await i.update({ embeds: [pages[currentPage]], components: [row] });
+                        await specificInteraction.editReply({ embeds: [pages[currentPage]], components: [row] });
                     });
 
                 } else {
@@ -245,7 +246,7 @@ module.exports = {
                                 collector.stop();
                             }
                         }
-                        await i.update({ embeds: [embed2]});
+                        await specificInteraction.editReply({ embeds: [embed2]});
                     });
                 }
             } catch (error) {
