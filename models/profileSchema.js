@@ -6,9 +6,10 @@ const profileSchema = new mongoose.Schema({
     serverId: { type: String, require: true},
     magicTokens: { type: Number, default: 0 },
     dailyLastUsed : { type: String},
-    rollLastUsed : { type: Number, default: 0},
+    rollLastUsed : { type: String, default: 0},
     cardDailyLeft : { type: Number, default: 10},
-    ownedCards: { type: Array, require: true}
+    cardDailyClaimed: { type: Boolean, default: false},
+    ownedCards: [{ type: Object, require: true}]
 });
 
 const model = mongoose.model("magicbot", profileSchema);

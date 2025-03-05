@@ -6,6 +6,7 @@ const { Client, Collection, Events, SlashCommandBuilder, GatewayIntentBits, Embe
 const { token, testToken, MONGODB: database } = require("./config.json");
 const mongoose = require("mongoose");
 const profileModel = require("./models/profileSchema");
+const ownedCardsModel = require("./models/ownedCardsSchema");
 
 const client = new Client({ 
   intents: [
@@ -42,10 +43,23 @@ client.on('interactionCreate', async interaction => {
                 username: interaction.user.username,
                 userId: interaction.user.id,
                 serverId: interaction.guild.id,
+                ownedCards:  []
             })
         }
     } catch (error) {
-        console.log(err);
+        console.log(error);
+    }
+
+    let ownedCardsData;
+    try {
+        ownedCardsData = await ownedCardsModel.findOne({serverId: interaction.guild.id})
+        if(!ownedCardsData) {
+            ownedCardsData = await ownedCardsModel.create({
+                serverId: interaction.guild.id,
+            })
+        }
+    } catch (error) {
+        console.log(error);
     }
 
     const command = client.commands.get(interaction.commandName);

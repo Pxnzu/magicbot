@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
 
 const ownedCardsSchema = new mongoose.Schema({
-    cardId: { type: String, require: true, unique: true },
-    userId: { type: String, require: true, unique: true },
+    cards: [{ type: Object, require: true}],
     serverId: { type: String, require: true}
 });
 

@@ -76,8 +76,7 @@ module.exports = {
                     );
                 const message = interaction.editReply({ embeds: [pages[currentPage]], components: [row], withResponse: true });
 
-                const filter = i => i.user.id === interaction.user.id && ['prev', 'next'].includes(i.customId);
-                const collector = interaction.channel.createMessageComponentCollector({ filter, time: 120000 });
+                const collector = interaction.channel.createMessageComponentCollector({ time: 120000 });
                 
                 // receive button presses and update embed
                 collector.on('collect', async i => {
