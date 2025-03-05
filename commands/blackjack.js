@@ -7,15 +7,14 @@ module.exports = {
         .addIntegerOption(option =>
             option.setName('wager')
                 .setDescription('How much you want to bet')
-                .setRequired(true)),
+                .setRequired(true))
+                .setMinValue(1),
     category: 'Economy',
     async execute(interaction, profileData) {
         let wagerAmt = interaction.options.getInteger('wager');
         const { magicTokens } = profileData;
         if ( magicTokens < wagerAmt ) {
             return await interaction.reply(`You do not have ${wagerAmt} tokens to wager`);
-        } if ( wagerAmt < 1 ) {
-            return await interaction.reply(`You cannot wager less than 1 token`);
         } else {
             const deck = createDeck();
             let playerHand = [drawCard(deck), drawCard(deck)];

@@ -13,6 +13,7 @@ module.exports = {
             option.setName('amount')
                 .setDescription('Amount to bet')
                 .setRequired(true)
+                .setMinValue(1)
         )
         .addIntegerOption(option =>
             option.setName('horse')
@@ -52,9 +53,6 @@ module.exports = {
         
         if (betAmount > magicTokens) {
             return interaction.reply({ content: `❌ You don't have enough tokens to place this bet!`, ephemeral: true });
-        }
-        if (betAmount == 0 ) {
-            return interaction.reply({ content: `❌ You cannot bet 0 tokens!`, ephemeral: true });
         }
 
         // Deduct the bet amount
