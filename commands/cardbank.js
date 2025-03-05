@@ -15,7 +15,7 @@ module.exports = {
         let cardbankEmbed = new EmbedBuilder()
             .setTitle('**My cards**')
             .setColor(0x45d6fd)
-            .setFooter({ text: 'You have no cards'});
+            .setFooter({ text: `You have ${ownedCards.length} cards`});
 
         const ownedcardslength = ownedCards;
 

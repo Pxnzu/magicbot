@@ -59,7 +59,10 @@ module.exports = {
 
                 // create embed for card
                 const cardData = await response.json();
-                const embed = new EmbedBuilder().setColor('LuminousVividPink').setURL(cardData.scryfall_uri || 'https://scryfall.com')
+                const embed = new EmbedBuilder().setColor('LuminousVividPink').setURL(cardData.scryfall_uri || 'https://scryfall.com');
+                const embed2 = new EmbedBuilder()
+                    .setColor('LuminousVividPink')
+                    .setTitle('Card Claimed');
 
                 let isEnabled = true;
                 if (cardDailyClaimed == true) {
@@ -112,27 +115,10 @@ module.exports = {
                     const row = new ActionRowBuilder()
                         .addComponents(
                             new ButtonBuilder()
-                                .setCustomId('claim')
+                                .setCustomId(`claim${cardDailyLeft - 1}`)
                                 .setLabel('Claim Card')
                                 .setStyle(ButtonStyle.Primary)
                                 .setDisabled(!isEnabled),
-                            new ButtonBuilder()
-                                .setCustomId('prev')
-                                .setEmoji('◀️')
-                                .setStyle(ButtonStyle.Primary)
-                                .setDisabled(true),
-                            new ButtonBuilder()
-                                .setCustomId('next')
-                                .setEmoji('▶️')
-                                .setStyle(ButtonStyle.Primary)
-                    );
-                    const row2 = new ActionRowBuilder()
-                        .addComponents(
-                            new ButtonBuilder()
-                                .setCustomId('claimed')
-                                .setLabel('Claimed!')
-                                .setStyle(ButtonStyle.Primary)
-                                .setDisabled(true),
                             new ButtonBuilder()
                                 .setCustomId('prev')
                                 .setEmoji('◀️')
@@ -152,7 +138,7 @@ module.exports = {
                             currentPage--;
                         } else if (i.customId === 'next' && currentPage < pages.length - 1) {
                             currentPage++;
-                        } else if (i.customId === 'claim') {
+                        } else if (i.customId === `claim${cardDailyLeft - 1}`) {
                             if (cardDailyClaimed == true) {
                                 collector.stop();
                             } else {
@@ -186,6 +172,7 @@ module.exports = {
                                     console.log(err);
                                 }
                                 collector.stop();
+                                return await i.update({ embeds: [embed2]});
                             }
                         }
             
@@ -217,25 +204,17 @@ module.exports = {
                     );
                     const row = new ActionRowBuilder().addComponents(
                         new ButtonBuilder()
-                            .setCustomId('claim')
+                            .setCustomId(`claim${cardDailyLeft - 1}`)
                             .setLabel('Claim Card')
                             .setStyle(ButtonStyle.Primary)
                             .setDisabled(!isEnabled)
-                    );
-                    const row2 = new ActionRowBuilder()
-                        .addComponents(
-                            new ButtonBuilder()
-                                .setCustomId('claimed')
-                                .setLabel('Claimed!')
-                                .setStyle(ButtonStyle.Primary)
-                                .setDisabled(true)
                     );
                     interaction.editReply({ embeds: [embed], components: [row]  });
                     const collector = interaction.channel.createMessageComponentCollector({ time: 120000 });
 
                     // receive button presses and update embed
                     collector.on('collect', async i => {
-                        if (i.customId === 'claim') {
+                        if (i.customId === `claim${cardDailyLeft - 1}`) {
                             if (cardDailyClaimed == true) {
                                 collector.stop();
                             } else {
@@ -266,7 +245,7 @@ module.exports = {
                                 collector.stop();
                             }
                         }
-                        await i.update({ embeds: [embed], components: [row2] });
+                        await i.update({ embeds: [embed2]});
                     });
                 }
             } catch (error) {
