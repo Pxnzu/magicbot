@@ -7,8 +7,9 @@ module.exports = {
         .addIntegerOption(option =>
             option.setName('wager')
                 .setDescription('How much you want to bet')
-                .setRequired(true))
-                .setMinValue(1),
+                .setRequired(true)
+                .setMinValue(1)
+        ),
     category: 'Economy',
     async execute(interaction, profileData) {
         let wagerAmt = interaction.options.getInteger('wager');
