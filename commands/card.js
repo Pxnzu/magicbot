@@ -6,7 +6,7 @@ const ownedCardsModel = require('../models/ownedCardsSchema');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('card') // Name must be lowercase
-        .setDescription('User can roll for cards 10 times and claim 1 per day'), // Description is required
+        .setDescription('User can roll for cards 1 time and claim 1 per day'), // Description is required
     category: 'Magic The Gathering',
     async execute(interaction, profileData) {
         const { rollLastUsed, cardDailyLeft } = profileData;
@@ -23,13 +23,13 @@ module.exports = {
         }
         // cooldown is up?
         if (timeLeft < 1) {
-            // if cooldown is finished, 10 rolls are available
+            // if cooldown is finished, 1 roll is available
             try {
                 await profileModel.findOneAndUpdate(
                     { userId: id },
                     {
                         $set: {
-                            cardDailyLeft: 10,
+                            cardDailyLeft: 1,
                         },
                     }
                 )
