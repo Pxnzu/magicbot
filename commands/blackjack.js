@@ -75,7 +75,7 @@ module.exports = {
                             .setTitle('Blackjack')
                             .setDescription(`**Your hand:** ${handToString(playerHand)} (Total: ${calculateHand(playerHand)})\n**Dealer's hand:** ${cardToString(dealerHand[0])}, ??`)
                             .setColor(0x00AE86)
-                            .addFields({ name: `${interaction.user.username}`, value : `Wagering ${wagerAmt} tokens...`})
+                            .addFields({ name: `${i.user.username}`, value : `Wagering ${wagerAmt} tokens...`})
                     ],
                     components: [row]
                 });
