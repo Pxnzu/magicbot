@@ -7,16 +7,26 @@ module.exports = {
         .addIntegerOption(option =>
             option.setName('wager')
                 .setDescription('How much you want to bet')
-                .setRequired(true)),
+                .setRequired(true)
+                .setMinValue(1)
+        ),
     category: 'Economy',
     async execute(interaction, profileData) {
         let wagerAmt = interaction.options.getInteger('wager');
         const { magicTokens } = profileData;
         if ( magicTokens < wagerAmt ) {
             return await interaction.reply(`You do not have ${wagerAmt} tokens to wager`);
-        } if ( wagerAmt < 1 ) {
-            return await interaction.reply(`You cannot wager less than 1 token`);
         } else {
+            await profileModel.findOneAndUpdate(
+                {
+                    userId: interaction.user.id
+                },
+                {
+                    $inc: {
+                        magicTokens: -wagerAmt
+                    }
+                },
+            );
             const deck = createDeck();
             let playerHand = [drawCard(deck), drawCard(deck)];
             let dealerHand = [drawCard(deck), drawCard(deck)];
@@ -34,35 +44,49 @@ module.exports = {
 
             const row = new ActionRowBuilder().addComponents(
                 new ButtonBuilder()
-                    .setCustomId('hit')
+                    .setCustomId(`hit`)
                     .setLabel('Hit')
                     .setStyle(ButtonStyle.Primary),
                 new ButtonBuilder()
-                    .setCustomId('stand')
+                    .setCustomId(`stand`)
                     .setLabel('Stand')
                     .setStyle(ButtonStyle.Primary),
                 new ButtonBuilder()
-                    .setCustomId('doubledown')
+                    .setCustomId(`doubledown`)
                     .setLabel('Double Down')
                     .setStyle(ButtonStyle.Primary)
                     .setDisabled(!isEnabled)
             );
             
-            await interaction.reply({ embeds: [embed], components: [row] });
-
-            const filter = (i) => i.user.id === interaction.user.id;
+            const message = await interaction.reply({ embeds: [embed], components: [row], fetchReply: true });
+            const filter = (i) => {
+                if (i.message.id != message.id ) {
+                    return false;
+                }
+                return i.user.id === interaction.user.id && i.message.id === message.id;
+            }
             const collector = interaction.channel.createMessageComponentCollector({ filter, time: 60000 });
 
             collector.on('collect', async (i) => {
-                if (i.customId === 'hit') {
+                if (i.customId === `hit`) {
                     playerHand.push(drawCard(deck));
                     if (calculateHand(playerHand) > 21) {
                         collector.stop('bust');
                     }
-                } else if (i.customId === 'stand') {
+                } else if (i.customId === `stand`) {
                     collector.stop('stand');
-                } else if (i.customId === 'doubledown') {
+                } else if (i.customId === `doubledown`) {
                     playerHand.push(drawCard(deck));
+                    await profileModel.findOneAndUpdate(
+                        {
+                            userId: interaction.user.id
+                        },
+                        {
+                            $inc: {
+                                magicTokens: -wagerAmt
+                            }
+                        },
+                    );
                     wagerAmt *= 2;
                     if (calculateHand(playerHand) > 21) {
                         collector.stop('bust');
@@ -75,7 +99,7 @@ module.exports = {
                             .setTitle('Blackjack')
                             .setDescription(`**Your hand:** ${handToString(playerHand)} (Total: ${calculateHand(playerHand)})\n**Dealer's hand:** ${cardToString(dealerHand[0])}, ??`)
                             .setColor(0x00AE86)
-                            .addFields({ name: `${interaction.user.username}`, value : `Wagering ${wagerAmt} tokens...`})
+                            .addFields({ name: `${i.user.username}`, value : `Wagering ${wagerAmt} tokens...`})
                     ],
                     components: [row]
                 });
@@ -84,16 +108,6 @@ module.exports = {
             collector.on('end', async (_, reason) => {
                 if (reason === 'bust') {
                     await interaction.followUp(`Bust! Your total is over 21. Dealer wins!`);
-                    await profileModel.findOneAndUpdate(
-                        {
-                            userId: interaction.user.id
-                        },
-                        {
-                            $inc: {
-                                magicTokens: -wagerAmt
-                            }
-                        },
-                    );
                     return;
                 }
 
@@ -114,26 +128,26 @@ module.exports = {
                         },
                         {
                             $inc: {
-                                magicTokens: +wagerAmt
+                                magicTokens: +(wagerAmt*2)
                             }
                         },
                     );
                 } else if (dealerTotal === playerTotal) {
                     result += '**It\'s a tie!**';
                     result += `\n${interaction.user.username} kept their tokens!`;
-                } else {
-                    result += '**Dealer wins!**';
-                    result += `\n${interaction.user.username} lost ${wagerAmt} tokens!`;
                     await profileModel.findOneAndUpdate(
                         {
                             userId: interaction.user.id
                         },
                         {
                             $inc: {
-                                magicTokens: -wagerAmt
+                                magicTokens: +wagerAmt
                             }
                         },
                     );
+                } else {
+                    result += '**Dealer wins!**';
+                    result += `\n${interaction.user.username} lost ${wagerAmt} tokens!`;
                 }
 
                 await interaction.followUp({

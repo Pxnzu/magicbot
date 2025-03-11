@@ -12,7 +12,8 @@ module.exports = {
     async execute(interaction) {
         const cardName = interaction.options.getString('name');
         const url = `https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(cardName)}`;
-        
+        let specificInteraction = interaction;
+
         // fetch card
         try {
 
@@ -25,7 +26,7 @@ module.exports = {
             // create embed for card
             const cardData = await response.json();
             const embed = new EmbedBuilder().setColor('LuminousVividPink').setURL(cardData.scryfall_uri || 'https://scryfall.com')
-            
+
             // if card has two faces
             if (cardData.card_faces) {
                 await interaction.deferReply();
@@ -65,31 +66,31 @@ module.exports = {
                 const row = new ActionRowBuilder()
                     .addComponents(
                         new ButtonBuilder()
-                            .setCustomId('prev')
+                            .setCustomId(`prev${interaction.id}`)
                             .setEmoji('◀️')
                             .setStyle(ButtonStyle.Primary)
                             .setDisabled(true),
                         new ButtonBuilder()
-                            .setCustomId('next')
+                            .setCustomId(`next${interaction.id}`)
                             .setEmoji('▶️')
                             .setStyle(ButtonStyle.Primary)
                     );
-                const message = interaction.editReply({ embeds: [pages[currentPage]], components: [row], withResponse: true });
 
+                const message = interaction.editReply({ embeds: [pages[currentPage]], components: [row], withResponse: true });
                 const collector = interaction.channel.createMessageComponentCollector({ time: 120000 });
                 
                 // receive button presses and update embed
                 collector.on('collect', async i => {
-                    if (i.customId === 'prev' && currentPage > 0) {
+                    if (i.customId === `prev${interaction.id}` && currentPage > 0) {
                         currentPage--;
-                    } else if (i.customId === 'next' && currentPage < pages.length - 1) {
+                    } else if (i.customId === `next${interaction.id}` && currentPage < pages.length - 1) {
                         currentPage++;
                     }
         
                     row.components[0].setDisabled(currentPage === 0);
                     row.components[1].setDisabled(currentPage === pages.length - 1);
-        
-                    await i.update({ embeds: [pages[currentPage]], components: [row] });
+                    
+                    await specificInteraction.editReply({ embeds: [pages[currentPage]], components: [row] });
                 });
 
             } else {

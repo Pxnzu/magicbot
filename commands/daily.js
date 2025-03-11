@@ -12,6 +12,7 @@ module.exports = {
         const { dailyLastUsed } = profileData;
 
         const today = new Date().toISOString().split("T")[0]; // Get current date in YYYY-MM-DD format
+        console.log(today);
 
         if (dailyLastUsed !== today) {
             await interaction.deferReply();
@@ -37,7 +38,7 @@ module.exports = {
         const now = new Date();
         const tomorrow = new Date(now);
         tomorrow.setDate(now.getDate() + 1);
-        tomorrow.setHours(0, 0, 0, 0);
+        tomorrow.setUTCHours(0, 0, 0, 0);
     
         const timeDifference = tomorrow.getTime() - now.getTime();
         const hours = Math.floor(timeDifference / (1000 * 60 * 60));
