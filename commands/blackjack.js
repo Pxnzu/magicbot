@@ -17,6 +17,16 @@ module.exports = {
         if ( magicTokens < wagerAmt ) {
             return await interaction.reply(`You do not have ${wagerAmt} tokens to wager`);
         } else {
+            await profileModel.findOneAndUpdate(
+                {
+                    userId: interaction.user.id
+                },
+                {
+                    $inc: {
+                        magicTokens: -wagerAmt
+                    }
+                },
+            );
             const deck = createDeck();
             let playerHand = [drawCard(deck), drawCard(deck)];
             let dealerHand = [drawCard(deck), drawCard(deck)];
@@ -67,6 +77,16 @@ module.exports = {
                     collector.stop('stand');
                 } else if (i.customId === `doubledown`) {
                     playerHand.push(drawCard(deck));
+                    await profileModel.findOneAndUpdate(
+                        {
+                            userId: interaction.user.id
+                        },
+                        {
+                            $inc: {
+                                magicTokens: -wagerAmt
+                            }
+                        },
+                    );
                     wagerAmt *= 2;
                     if (calculateHand(playerHand) > 21) {
                         collector.stop('bust');
@@ -88,16 +108,6 @@ module.exports = {
             collector.on('end', async (_, reason) => {
                 if (reason === 'bust') {
                     await interaction.followUp(`Bust! Your total is over 21. Dealer wins!`);
-                    await profileModel.findOneAndUpdate(
-                        {
-                            userId: interaction.user.id
-                        },
-                        {
-                            $inc: {
-                                magicTokens: -wagerAmt
-                            }
-                        },
-                    );
                     return;
                 }
 
@@ -118,26 +128,26 @@ module.exports = {
                         },
                         {
                             $inc: {
-                                magicTokens: +wagerAmt
+                                magicTokens: +(wagerAmt*2)
                             }
                         },
                     );
                 } else if (dealerTotal === playerTotal) {
                     result += '**It\'s a tie!**';
                     result += `\n${interaction.user.username} kept their tokens!`;
-                } else {
-                    result += '**Dealer wins!**';
-                    result += `\n${interaction.user.username} lost ${wagerAmt} tokens!`;
                     await profileModel.findOneAndUpdate(
                         {
                             userId: interaction.user.id
                         },
                         {
                             $inc: {
-                                magicTokens: -wagerAmt
+                                magicTokens: +wagerAmt
                             }
                         },
                     );
+                } else {
+                    result += '**Dealer wins!**';
+                    result += `\n${interaction.user.username} lost ${wagerAmt} tokens!`;
                 }
 
                 await interaction.followUp({
