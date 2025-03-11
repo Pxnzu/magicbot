@@ -11,22 +11,11 @@ module.exports = {
         const { rollLastUsed, cardDailyLeft, cardDailyClaimed } = profileData;
         const { username, id } = interaction.user;
         let specificInteraction = interaction;
+        
         const today = new Date().toISOString().split("T")[0]; // Get current date in YYYY-MM-DD format 
         // cooldown is up?
         if (rollLastUsed !== today) {
             // if cooldown is finished, 10 rolls are available
-        const cooldown = 86400000;
-        const timeLeft = cooldown - (Date.now() - rollLastUsed);
-        // no rolls, on cooldown
-        if (timeLeft > 0 && cardDailyLeft < 10) {
-            await interaction.deferReply();
-            const { hours, minutes, seconds } = parseMilliseconds(timeLeft);
-            console.log(`${username} tried to roll, but still has a cooldown`);
-            return await interaction.editReply(`No rolls left.\nRoll again in ${hours} hr ${minutes} min ${seconds} sec`);
-        }
-        // cooldown is up?
-        if (timeLeft < 1) {
-            // if cooldown is finished, 1 roll is available
             try {
                 await profileModel.findOneAndUpdate(
                     { userId: id },
@@ -35,7 +24,6 @@ module.exports = {
                             cardDailyLeft: 10,
                             cardDailyClaimed: false,
                             rollLastUsed: today,
-                            cardDailyLeft: 1,
                         },
                     }
                 )
@@ -234,22 +222,6 @@ module.exports = {
                             return false;
                         }
                         return i.user.id === interaction.user.id && i.message.id === message.id;
-                const message = interaction.editReply({ embeds: [pages[currentPage]], components: [row], withResponse: true });
-
-                const filter = (i) => {
-                    if (i.message.id != message.id ) {
-                        return false;
-                    }
-                    return i.user.id === interaction.user.id && i.message.id === message.id;
-                }
-                const collector = interaction.channel.createMessageComponentCollector({ filter, time: 120000 });
-                
-                // receive button presses and update embed
-                collector.on('collect', async i => {
-                    if (i.customId === 'prev' && currentPage > 0) {
-                        currentPage--;
-                    } else if (i.customId === 'next' && currentPage < pages.length - 1) {
-                        currentPage++;
                     }
                     const collector = interaction.channel.createMessageComponentCollector({ filter, time: 120000 });
 
