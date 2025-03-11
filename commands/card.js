@@ -116,30 +116,36 @@ module.exports = {
                     const row = new ActionRowBuilder()
                         .addComponents(
                             new ButtonBuilder()
-                                .setCustomId(`claim${interaction.id}`)
+                                .setCustomId(`claim`)
                                 .setLabel('Claim Card')
                                 .setStyle(ButtonStyle.Primary)
                                 .setDisabled(!isEnabled),
                             new ButtonBuilder()
-                                .setCustomId(`prev${interaction.id}`)
+                                .setCustomId(`prev`)
                                 .setEmoji('◀️')
                                 .setStyle(ButtonStyle.Primary)
                                 .setDisabled(true),
                             new ButtonBuilder()
-                                .setCustomId(`next${interaction.id}`)
+                                .setCustomId(`next`)
                                 .setEmoji('▶️')
                                 .setStyle(ButtonStyle.Primary)
                     );
                     const message = interaction.editReply({ embeds: [pages[currentPage]], components: [row], withResponse: true });
-                    const collector = interaction.channel.createMessageComponentCollector({ time: 120000 });
+                    const filter = (i) => {
+                        if (i.message.id != message.id ) {
+                            return false;
+                        }
+                        return i.user.id === interaction.user.id && i.message.id === message.id;
+                    }
+                    const collector = interaction.channel.createMessageComponentCollector({ filter, time: 120000 });
                     
                     // receive button presses and update embed
                     collector.on('collect', async i => {
-                        if (i.customId === `prev${interaction.id}` && currentPage > 0) {
+                        if (i.customId === `prev` && currentPage > 0) {
                             currentPage--;
-                        } else if (i.customId === `next${interaction.id}` && currentPage < pages.length - 1) {
+                        } else if (i.customId === `next` && currentPage < pages.length - 1) {
                             currentPage++;
-                        } else if (i.customId === `claim${interaction.id}`) {
+                        } else if (i.customId === `claim`) {
                             if (cardDailyClaimed == true) {
                                 collector.stop();
                             } else {
@@ -205,17 +211,23 @@ module.exports = {
                     );
                     const row = new ActionRowBuilder().addComponents(
                         new ButtonBuilder()
-                            .setCustomId(`claim${interaction.id}`)
+                            .setCustomId(`claim`)
                             .setLabel('Claim Card')
                             .setStyle(ButtonStyle.Primary)
                             .setDisabled(!isEnabled)
                     );
                     interaction.editReply({ embeds: [embed], components: [row]  });
-                    const collector = interaction.channel.createMessageComponentCollector({ time: 120000 });
+                    const filter = (i) => {
+                        if (i.message.id != message.id ) {
+                            return false;
+                        }
+                        return i.user.id === interaction.user.id && i.message.id === message.id;
+                    }
+                    const collector = interaction.channel.createMessageComponentCollector({ filter, time: 120000 });
 
                     // receive button presses and update embed
                     collector.on('collect', async i => {
-                        if (i.customId === `claim${interaction.id}`) {
+                        if (i.customId === `claim`) {
                             if (cardDailyClaimed == true) {
                                 collector.stop();
                             } else {
