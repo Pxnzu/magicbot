@@ -34,34 +34,38 @@ module.exports = {
 
             const row = new ActionRowBuilder().addComponents(
                 new ButtonBuilder()
-                    .setCustomId('hit')
+                    .setCustomId(`hit`)
                     .setLabel('Hit')
                     .setStyle(ButtonStyle.Primary),
                 new ButtonBuilder()
-                    .setCustomId('stand')
+                    .setCustomId(`stand`)
                     .setLabel('Stand')
                     .setStyle(ButtonStyle.Primary),
                 new ButtonBuilder()
-                    .setCustomId('doubledown')
+                    .setCustomId(`doubledown`)
                     .setLabel('Double Down')
                     .setStyle(ButtonStyle.Primary)
                     .setDisabled(!isEnabled)
             );
             
-            await interaction.reply({ embeds: [embed], components: [row] });
-
-            const filter = (i) => i.user.id === interaction.user.id;
+            const message = await interaction.reply({ embeds: [embed], components: [row], fetchReply: true });
+            const filter = (i) => {
+                if (i.message.id != message.id ) {
+                    return false;
+                }
+                return i.user.id === interaction.user.id && i.message.id === message.id;
+            }
             const collector = interaction.channel.createMessageComponentCollector({ filter, time: 60000 });
 
             collector.on('collect', async (i) => {
-                if (i.customId === 'hit') {
+                if (i.customId === `hit`) {
                     playerHand.push(drawCard(deck));
                     if (calculateHand(playerHand) > 21) {
                         collector.stop('bust');
                     }
-                } else if (i.customId === 'stand') {
+                } else if (i.customId === `stand`) {
                     collector.stop('stand');
-                } else if (i.customId === 'doubledown') {
+                } else if (i.customId === `doubledown`) {
                     playerHand.push(drawCard(deck));
                     wagerAmt *= 2;
                     if (calculateHand(playerHand) > 21) {
