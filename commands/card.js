@@ -6,7 +6,7 @@ const ownedCardsModel = require('../models/ownedCardsSchema');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('card') // Name must be lowercase
-        .setDescription('User can roll for cards 1 time and claim 1 per day'), // Description is required
+        .setDescription('User can roll for cards 10 times and claim 1 per day'), // Description is required
     category: 'Magic The Gathering',
     async execute(interaction, profileData) {
         const { rollLastUsed, cardDailyLeft } = profileData;
@@ -15,7 +15,7 @@ module.exports = {
         const cooldown = 86400000;
         const timeLeft = cooldown - (Date.now() - rollLastUsed);
         // no rolls, on cooldown
-        if (timeLeft > 0 && cardDailyLeft < 1) {
+        if (timeLeft > 0 && cardDailyLeft < 10) {
             await interaction.deferReply();
             const { hours, minutes, seconds } = parseMilliseconds(timeLeft);
             console.log(`${username} tried to roll, but still has a cooldown`);
@@ -125,7 +125,12 @@ module.exports = {
                     );
                 const message = interaction.editReply({ embeds: [pages[currentPage]], components: [row], withResponse: true });
 
-                const filter = i => i.user.id === interaction.user.id && ['prev', 'next'].includes(i.customId);
+                const filter = (i) => {
+                    if (i.message.id != message.id ) {
+                        return false;
+                    }
+                    return i.user.id === interaction.user.id && i.message.id === message.id;
+                }
                 const collector = interaction.channel.createMessageComponentCollector({ filter, time: 120000 });
                 
                 // receive button presses and update embed
