@@ -8,6 +8,7 @@ module.exports = {
         .setDescription('User can roll for cards 10 times and claim 1 per day'), // Description is required
     category: 'Magic The Gathering',
     async execute(interaction, profileData) {
+        return await interaction.reply("This command is not currently working. To prevent crashes, it is disabled.")
         const { rollLastUsed, cardDailyLeft, cardDailyClaimed } = profileData;
         const { username, id } = interaction.user;
         let specificInteraction = interaction;
